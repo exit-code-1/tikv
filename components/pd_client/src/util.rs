@@ -494,7 +494,7 @@ where
             Err(err) => {
                 // these errors are not caused by network, no need to retry
                 if err.retryable() && self.remain_request_count > 0 {
-                    error!(?*err; "request failed, retry");
+                    warn!("request failed, retry"; "error" => ?*err);
                     false
                 } else {
                     true
@@ -559,7 +559,7 @@ where
         // try reconnect
         retry -= 1;
         if let Err(e) = block_on(client.reconnect(true)) {
-            error!(?e; "reconnect failed");
+            warn!("reconnect failed"; "error" => ?e);
             thread::sleep(REQUEST_RECONNECT_INTERVAL);
         }
     }
@@ -695,7 +695,7 @@ impl PdConnector {
                         // Try next follower endpoint if the cluster has not ready since this pr:
                         // pd#5412.
                         if let Err(e) = check_resp_header(header) {
-                            error!("connect pd failed";"endpoints" => ep, "error" => ?e);
+                            warn!("connect pd failed";"endpoints" => ep, "error" => ?e);
                         } else {
                             let new_cluster_id = header.get_cluster_id();
                             // it is new cluster if the new cluster id is zero.
@@ -708,7 +708,7 @@ impl PdConnector {
                             // Try next endpoint if PD server returns the
                             // cluster id is zero without any error.
                             } else if new_cluster_id == 0 {
-                                error!("{} connect success, but cluster id is not ready", ep);
+                                warn!("{} connect success, but cluster id is not ready", ep);
                             } else {
                                 panic!(
                                     "{} no longer belongs to cluster {}, it is in {}",
@@ -718,7 +718,7 @@ impl PdConnector {
                         }
                     }
                     Err(e) => {
-                        error!("connect failed"; "endpoints" => ep, "error" => ?e);
+                        warn!("connect failed"; "endpoints" => ep, "error" => ?e);
                         continue;
                     }
                 }
@@ -817,7 +817,7 @@ impl PdConnector {
                             network_fail_num += 1;
                         }
                     }
-                    error!("failed to connect to PD member"; "endpoints" => ep, "error" => ?e);
+                    warn!("failed to connect to PD member"; "endpoints" => ep, "error" => ?e);
                 }
                 _ => unreachable!(),
             }

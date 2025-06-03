@@ -413,7 +413,7 @@ impl StoreStatsReporter for PdReporter {
             min_resolved_ts,
         };
         if let Err(e) = self.scheduler.schedule(task) {
-            error!(
+            warn!(
                 self.logger,
                 "failed to send min resolved ts to pd worker";
                 "err" => ?e,

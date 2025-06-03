@@ -2282,7 +2282,7 @@ impl<EK: KvEngine, ER: RaftEngine, T: Transport> StoreFsmDelegate<'_, EK, ER, T>
         }
 
         if !msg.has_region_epoch() {
-            error!(
+            info!(
                 "missing epoch in raft message, ignore it";
                 "region_id" => region_id,
             );
@@ -2854,7 +2854,7 @@ impl<EK: KvEngine, ER: RaftEngine, T: Transport> StoreFsmDelegate<'_, EK, ER, T>
             min_resolved_ts,
         };
         if let Err(e) = self.ctx.pd_scheduler.schedule(task) {
-            error!("failed to send min resolved ts to pd worker";
+            warn!("failed to send min resolved ts to pd worker";
                 "store_id" => self.fsm.store.id,
                 "err" => ?e
             );

@@ -664,8 +664,9 @@ where
                     }
 
                     if let Err(e) = self.on_raft_message(msg) {
-                        error!(%e;
+                        warn!(
                             "handle raft message err";
+                            "err" => ?e,
                             "region_id" => self.fsm.region_id(),
                             "peer_id" => self.fsm.peer_id(),
                         );
@@ -3216,7 +3217,7 @@ where
         }
 
         if !msg.has_region_epoch() {
-            error!(
+            info!(
                 "missing epoch in raft message, ignore it";
                 "region_id" => region_id,
             );

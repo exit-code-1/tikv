@@ -5886,8 +5886,9 @@ where
         send_msg.set_extra_msg(msg);
         send_msg.set_to_peer(to.clone());
         if let Err(e) = trans.send(send_msg) {
-            error!(?e;
+            warn!(
                 "failed to send extra message";
+                "error" => ?e,
                 "type" => ?ty,
                 "region_id" => self.region_id,
                 "peer_id" => self.peer.get_id(),

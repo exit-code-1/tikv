@@ -425,7 +425,7 @@ where
                     }
                 },
                 // TODO: should we clean region for other errors too?
-                Err(e) => error!(?e; "bootstrap cluster"; "cluster_id" => self.cluster_id,),
+                Err(e) => warn!("bootstrap cluster"; "err" => ?e, "cluster_id" => self.cluster_id,),
             }
             retry += 1;
             thread::sleep(CHECK_CLUSTER_BOOTSTRAPPED_RETRY_INTERVAL);
